@@ -1,0 +1,5 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "./native/xml_parse/Cargo.toml",
+    ]
+}
