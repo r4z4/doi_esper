@@ -13,4 +13,10 @@ defmodule DoiEsper.NifTest do
     town_data = %TownData{year: 2020, code: 1, town: "Andover", _2010_census: 1317, gov_assisted: 18, tenant_rental_assistance: 1, chfa_usda_mortgages: 32, deed_restricted: 0, total_assisted: 51, percent_assisted: 3.8699999999999997}
     assert town_data |> Map.delete(:__meta__) |> Map.delete(:id) == List.first(XmlParse.parse(xml_string))
   end
+
+  test "nif parses file" do
+    file_path = "./priv/static/files/housing.xml"
+    town_data = %TownData{year: 2020, code: 1, town: "Andover", _2010_census: 1317, gov_assisted: 18, tenant_rental_assistance: 1, chfa_usda_mortgages: 32, deed_restricted: 0, total_assisted: 51, percent_assisted: 3.8699999999999997}
+    assert town_data |> Map.delete(:__meta__) |> Map.delete(:id) == List.first(XmlParse.parse_file(file_path))
+  end
 end
