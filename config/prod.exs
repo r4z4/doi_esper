@@ -16,5 +16,15 @@ config :swoosh, local: false
 # Do not print debug messages in production
 config :logger, level: :info
 
+# config :doi_esper, MyApp.XmlParse,
+#   crate: :xml_parse,
+#   skip_compilation?: true,
+#   load_from: {:doi_esper, "priv/native/xml_parse"}
+
+# config :doi_esper, DoiEsper.ImageEncode,
+#   crate: :image_encode,
+#   skip_compilation?: true,
+#   load_from: {:doi_esper, "priv/native/image_encode"}
+
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
