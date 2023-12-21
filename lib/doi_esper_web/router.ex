@@ -18,6 +18,13 @@ defmodule DoiEsperWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    live "/town", TownLive.Index, :index
+    live "/town/new", TownLive.Index, :new
+    live "/town/:id/edit", TownLive.Index, :edit
+
+    live "/town/:id", TownLive.Show, :show
+    live "/town/:id/show/edit", TownLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.

@@ -17,7 +17,8 @@ defmodule DoiEsper.Application do
       # Start Finch
       {Finch, name: DoiEsper.Finch},
       # Start the Endpoint (http/https)
-      DoiEsperWeb.Endpoint
+      DoiEsperWeb.Endpoint,
+      Supervisor.child_spec({DoiEsper.Servers.XmlServer,  [:xml_server, []]}, id: :xml_server)
       # Start a worker by calling: DoiEsper.Worker.start_link(arg)
       # {DoiEsper.Worker, arg}
     ]
