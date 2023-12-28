@@ -107,6 +107,10 @@ defmodule DoiEsper.Servers.ApiServer do
     round_id = Ecto.UUID.generate()
     addrs = Enum.map(body, fn addr -> to_addr(addr, round_id) end)
     IO.inspect(addrs, label: "addrs")
+    # Need to be maps to do insert all. ugh.
+    maps = Enum.map(addrs, fn addr -> Map.from_struct(addr) |> Map.delete(:__meta__) end)
+    IO.inspect(maps, label: "maps")
+    DoiEsper.Repo.insert_all(Address, maps)
     publish(body)
     addrs_ref = Process.send_after(self(), :addrs, @call_interval_ms)
     IO.inspect(addrs_ref, label: "New Addrs Ref")

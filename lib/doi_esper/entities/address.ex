@@ -14,8 +14,8 @@ defmodule DoiEsper.Entities.Address do
     field :country, :string
     field :country_code, :string
     field :full_address, :string
-    field :latitude, :integer
-    field :longitude, :integer
+    field :latitude, :float
+    field :longitude, :float
     field :mail_box, :string
     field :postcode, :string
     field :secondary_address, :string

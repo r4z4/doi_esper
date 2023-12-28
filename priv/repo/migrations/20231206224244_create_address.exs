@@ -15,8 +15,8 @@ defmodule DoiEsper.Repo.Migrations.CreateAddress do
       add :country, :string
       add :country_code, :string
       add :full_address, :string
-      add :latitude, :integer
-      add :longitude, :integer
+      add :latitude, :float
+      add :longitude, :float
       add :mail_box, :string
       add :postcode, :string
       add :secondary_address, :string
