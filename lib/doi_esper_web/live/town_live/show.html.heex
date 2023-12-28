@@ -18,7 +18,7 @@
 
 <.modal :if={@live_action == :edit} id="stream-modal" show on_cancel={JS.patch(~p"/stream/#{@stream}")}>
   <.live_component
-    module={StreamHandlerWeb.StreamLive.FormComponent}
+    module={DoiEsperWeb.StreamLive.FormComponent}
     id={@stream.id}
     title={@page_title}
     action={@live_action}

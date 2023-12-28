@@ -3,8 +3,9 @@ defmodule DoiEsperWeb.TownLive.Index do
   alias DoiEsper.TownData
 
   @xml_parse "xml_parse"
+  @addrs "addrs"
   embed_templates "dashboard_html/*"
-  # alias StreamHandler.Streams.Stream
+  # alias DoiEsper.Streams.Stream
 
   @impl true
   def handle_call(:ping, _from, state) do
@@ -13,6 +14,7 @@ defmodule DoiEsperWeb.TownLive.Index do
 
   def subscribe_to_services do
     DoiEsperWeb.Endpoint.subscribe(@xml_parse)
+    DoiEsperWeb.Endpoint.subscribe(@addrs)
   end
 
   @impl true
@@ -28,6 +30,7 @@ defmodule DoiEsperWeb.TownLive.Index do
       socket
       |> assign(:clicked_map, init_map)
       |> assign(:xml_data, nil)
+      |> assign(:addrs, nil)
       |> assign(:tree_data, nil)
       |> assign(:uploaded_files, [])
       |> allow_upload(:avatar, accept: ~w(.mp3), max_entries: 5)
@@ -42,7 +45,7 @@ defmodule DoiEsperWeb.TownLive.Index do
     case Kernel.elem(Integer.parse(params["id"]), 0) do
       # GenServer.cast String.to_existing_atom(params["castto"]), {String.to_existing_atom(params["op"]), String.to_existing_atom(params["res"])}
       1 -> GenServer.cast :xml_server, {:fetch_resource, :xml_parse}
-      2 -> GenServer.cast :xml_server, {:fetch_resource, :xml_parse}
+      2 -> GenServer.cast :api_server, {:fetch_resource, :addrs}
       _ ->
         IO.puts "No Service Casted"
     end
@@ -105,18 +108,18 @@ defmodule DoiEsperWeb.TownLive.Index do
   end
 
   @impl true
-  def handle_info({StreamHandlerWeb.StreamLive.FormComponent, {:saved, stream}}, socket) do
+  def handle_info({DoiEsperWeb.StreamLive.FormComponent, {:saved, stream}}, socket) do
     {:noreply, stream_insert(socket, :stream_collection, stream)}
   end
 
 
   @impl true
-  def handle_info(%{topic: @emojis, payload: msg}, socket) do
+  def handle_info(%{topic: @addrs, payload: msg}, socket) do
     IO.inspect(socket)
-    IO.puts "Handle Broadcast for Emojis"
+    IO.puts "Handle Broadcast for Addrs"
     {:noreply,
       socket
-      |> assign(:emojis, msg[:data])
+      |> assign(:addrs, msg[:data])
     }
   end
 
