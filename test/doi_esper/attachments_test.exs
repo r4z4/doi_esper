@@ -1,6 +1,7 @@
 defmodule DoiEsper.AttachmentsTest do
   use ExUnit.Case
   alias DoiEsper.Core.Attachment
+  alias DoiEsper.Core.Error
 
   describe "to_attachment/1" do
 
@@ -29,14 +30,14 @@ defmodule DoiEsper.AttachmentsTest do
       object = %{
         "id" => "0aab625c-c034-4066-89f6-095a6fe761a8",
         "title" => "Title",
-        # "path" => "../title/path",
+        "path" => 1,
         "type" => 1,
         "data" => nil,
       }
 
       attachment = %Attachment{id: "0aab625c-c034-4066-89f6-095a6fe761a8", title: "Title", path: "../title/path", type: 1, data: nil}
 
-      assert Attachment.to_attachment(object) == attachment
+      assert Attachment.to_attachment(object) == [%Error{type: "Validation", text: "Invalid Path"}]
     end
   end
 end
