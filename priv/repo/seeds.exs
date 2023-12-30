@@ -30,6 +30,7 @@ alias DoiEsper.Core.Attachment
 alias DoiEsper.Entities.City
 alias DoiEsper.Entities.State
 alias DoiEsper.Core.Hold
+alias DoiEsper.Accounts.Authorize
 
 Repo.insert_all(User, [
       %{id: "a9f44567-e031-44f1-aae6-972d7aabbb45", username: "admin",        city: "Rapid City",     state: :SD, f_name: "Jim",    l_name: "Smith",        email: "admin@admin.com",      role: :admin,          hashed_password: Bcrypt.hash_pwd_salt("password"), confirmed_at: NaiveDateTime.local_now(), updated_at: NaiveDateTime.local_now(), inserted_at: NaiveDateTime.local_now()},
@@ -165,4 +166,52 @@ Repo.insert_all(Hold, [
       %{user_id: "df18d5eb-e99e-4481-9e16-4d2f434a3711", type: :favorite, hold_cat: :thread, hold_cat_id: "4fd6aa47-51da-4277-bca6-3a87b2153c20", updated_at: NaiveDateTime.local_now(), inserted_at: NaiveDateTime.local_now()}
 ])
 
-# # Ecto.UUID.bingenerate()
+
+#Authorization Roles
+Repo.insert_all(Authorize, [
+      # Jim went to town and chose them all
+      %{id: Ecto.UUID.generate(),
+            role: :reader,
+
+            read: %{:user=> true, :candidate => true, :election => true, :ballot => true, :forum => true, :post => true, :thread => true, :race => true},
+            edit: %{},
+            create: %{},
+            delete: %{},
+
+            updated_at: NaiveDateTime.local_now(),
+            inserted_at: NaiveDateTime.local_now()},
+
+      %{id: Ecto.UUID.generate(),
+            role: :voter,
+
+            read: %{:user=> true, :candidate => true, :election => true, :ballot => true, :forum => true, :post => true, :thread => true, :race => true},
+            # permissions will allow editing of post, but still depend on ownership if can truly edit
+            edit: %{:ballot => true, :post => true, :thread => true},
+            create: %{:post => true, :thread => true},
+            delete: %{:post => true, :thread => true},
+
+            updated_at: NaiveDateTime.local_now(),
+            inserted_at: NaiveDateTime.local_now()},
+
+      %{id: Ecto.UUID.generate(),
+            role: :admin,
+
+            read: %{:user=> true, :candidate => true, :election => true, :ballot => true, :forum => true, :post => true, :thread => true, :race => true},
+            edit: %{:user=> true, :candidate => true, :election => true, :ballot => true, :forum => true, :post => true, :thread => true, :race => true},
+            create: %{:user=> true, :candidate => true, :election => true, :ballot => true, :forum => true, :post => true, :thread => true, :race => true},
+            delete: %{:user=> true, :candidate => true, :election => true, :ballot => true, :forum => true, :post => true, :thread => true, :race => true},
+
+            updated_at: NaiveDateTime.local_now(),
+            inserted_at: NaiveDateTime.local_now()},
+
+      %{id: Ecto.UUID.generate(),
+            role: :candidate,
+
+            read: %{:candidate => true},
+            edit: %{:candidate => true},
+            create: %{:forum => true, :post => true, :thread => true, :race => true},
+            delete: %{},
+
+            updated_at: NaiveDateTime.local_now(),
+            inserted_at: NaiveDateTime.local_now()}
+])

@@ -1,4 +1,4 @@
-defmodule FanCan.Repo.Migrations.CreateState do
+defmodule DoiEsper.Repo.Migrations.CreateState do
   use Ecto.Migration
 
   def change do
