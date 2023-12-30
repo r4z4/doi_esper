@@ -15,7 +15,9 @@ config :doi_esper, DoiEsper.Repo,
   # database: "doi_esper_test#{System.get_env("MIX_TEST_PARTITION")}",
   database: "doi_esper_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
-  pool_size: 10
+  pool_size: 10,
+  adapter: Ecto.Adapters.Postgres,
+  types: DoiEsper.PostgresTypes
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
