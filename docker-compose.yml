@@ -4,7 +4,8 @@ services:
   db:
     hostname: db
     container_name: db-doi_esper
-    image: ankane/pgvector:latest
+    # image: ankane/pgvector:latest
+    image: postgis/postgis:15-3.4
     user: postgres
     environment:
       POSTGRES_USER: postgres

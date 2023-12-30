@@ -8,7 +8,9 @@ config :doi_esper, DoiEsper.Repo,
   database: "doi_esper_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  pool_size: 10,
+  adapter: Ecto.Adapters.Postgres,
+  types: DoiEsper.PostgresTypes
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

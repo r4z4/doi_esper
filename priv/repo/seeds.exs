@@ -31,6 +31,7 @@ alias DoiEsper.Entities.City
 alias DoiEsper.Entities.State
 alias DoiEsper.Core.Hold
 alias DoiEsper.Accounts.Authorize
+alias DoiEsper.Postgis.PostgisTest
 
 Repo.insert_all(User, [
       %{id: "a9f44567-e031-44f1-aae6-972d7aabbb45", username: "admin",        city: "Rapid City",     state: :SD, f_name: "Jim",    l_name: "Smith",        email: "admin@admin.com",      role: :admin,          hashed_password: Bcrypt.hash_pwd_salt("password"), confirmed_at: NaiveDateTime.local_now(), updated_at: NaiveDateTime.local_now(), inserted_at: NaiveDateTime.local_now()},
@@ -55,6 +56,18 @@ Repo.insert_all(TownData, [
 Repo.insert_all(City, [
       %{name: "Northfield", population: 1000, latitude: 41.988677, longitude: 3.8574657},
       %{name: "Deer River", population: 3000, latitude: 51.756465, longitude: 2.756697}
+])
+
+geo = %Geo.Point{coordinates: {30, -90}, srid: 4326}
+geo2 = %Geo.Point{coordinates: {-30, 90}, srid: 4326}
+geo3 = %Geo.Point{coordinates: {75, -10}, srid: 4326}
+Repo.insert_all(PostgisTest, [
+      %{name: "Northfield", geom: geo},
+      %{name: "Deer River", geom: geo2},
+      %{name: "Minneapolis", geom: geo3},
+      %{name: "Grand Rapids", geom: geo2},
+      %{name: "Burnsville", geom: geo},
+      %{name: "Elk River", geom: geo3}
 ])
 
 Repo.insert_all(Attachment, [

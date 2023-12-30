@@ -30,6 +30,8 @@ defmodule DoiEsperWeb.Router do
     live "/town/:id/show/edit", TownLive.Show, :edit
 
     live "/image", ImageLive.Index, :index
+
+    live "/postgis", PostgisLive.Index, :index
   end
 
   # Other scopes may use custom stacks.
