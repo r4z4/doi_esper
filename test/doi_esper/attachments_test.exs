@@ -31,7 +31,7 @@ defmodule DoiEsper.AttachmentsTest do
         "data" => nil,
       }
 
-      assert Attachment.to_attachment(object) == [%Error{type: "Validation", text: "Invalid Path"}]
+      assert Attachment.to_attachment(object) == [%Error{type: :validation, text: "Invalid Path"}]
     end
 
     test "error: title error yields title error" do
@@ -43,7 +43,7 @@ defmodule DoiEsper.AttachmentsTest do
         "data" => nil,
       }
 
-      assert Attachment.to_attachment(object) == [%Error{type: "Validation", text: "Invalid Title"}]
+      assert Attachment.to_attachment(object) == [%Error{type: :validation, text: "Invalid Title"}]
     end
   end
 end

@@ -13,7 +13,7 @@ defmodule DoiEsper.ErrorTest do
 
     test "empty? returns false for populated" do
       object = %ErrorList{
-        :errors => [%Error{type: "Validation", text: "Test"}],
+        :errors => [%Error{type: :validation, text: "Test"}],
       }
       assert ErrorList.empty?(object) == false
     end

@@ -3,6 +3,7 @@ defmodule DoiEsper.Core.Error do
   alias __MODULE__
 
   schema "error" do
+    # Use strings for atom
     field :type, :string
     field :text, :string
   end

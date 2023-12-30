@@ -74,4 +74,14 @@ defmodule DoiEsper.Core.Utils do
         [:Site, :General, :Politics, :State]
     end
 
+    @spec display_missing_fields(list()) :: binary()
+    def display_missing_fields(missing) do
+        List.foldl(missing, "", fn x, acc ->
+          if (x) do
+            (to_string(x) |> String.capitalize()) <> " " <> acc
+          else
+            acc
+          end
+        end) |> String.trim()
+    end
 end

@@ -24,7 +24,7 @@ defmodule DoiEsper.Core.Attachment do
     case is_binary(title) && String.length(title) in @title_min..@title_max do
       true -> {object, err_props}
       false ->
-        err_props = Map.replace(err_props, :errors, [%Error{type: "Validation", text: "Invalid Title"} | err_props.errors])
+        err_props = Map.replace(err_props, :errors, [%Error{type: :validation, text: "Invalid Title"} | err_props.errors])
         {object, err_props}
         # raise Error, %{type: "Path", text: "Hey"}
     end
@@ -36,7 +36,7 @@ defmodule DoiEsper.Core.Attachment do
     case is_binary(path) && String.length(path) in @title_min..@title_max do
       true -> {object, err_props}
       false ->
-        err_props = Map.replace(err_props, :errors, [%Error{type: "Validation", text: "Invalid Path"} | err_props.errors])
+        err_props = Map.replace(err_props, :errors, [%Error{type: :validation, text: "Invalid Path"} | err_props.errors])
         {object, err_props}
         #raise Error, %{type: "Path", text: "Hey"}
     end

@@ -35,7 +35,7 @@ defmodule DoiEsper.CityTest do
         :median_income => 55555,
       }
 
-      assert City.new(object) == [%Error{type: "Validation", text: "Invalid Name"}]
+      assert City.new(object) == [%Error{type: :validation, text: "Invalid Name"}]
     end
 
     test "error: state type error yields state type error" do
@@ -49,7 +49,7 @@ defmodule DoiEsper.CityTest do
         :median_income => 55555,
       }
 
-      assert City.new(object) == [%Error{type: "Validation", text: "Invalid State Type"}]
+      assert City.new(object) == [%Error{type: :validation, text: "Invalid State Type"}]
     end
 
     test "error: state error yields state error" do
@@ -63,7 +63,7 @@ defmodule DoiEsper.CityTest do
         :median_income => 55555,
       }
 
-      assert City.new(object) == [%Error{type: "Validation", text: "Invalid State"}]
+      assert City.new(object) == [%Error{type: :validation, text: "Invalid State"}]
     end
 
     test "error: state & name errors yields state & name errors" do
@@ -77,7 +77,7 @@ defmodule DoiEsper.CityTest do
         :median_income => 55555,
       }
 
-      assert City.new(object) == [%Error{type: "Validation", text: "Invalid State"}, %Error{type: "Validation", text: "Invalid Name"}]
+      assert City.new(object) == [%Error{type: :validation, text: "Invalid State"}, %Error{type: :validation, text: "Invalid Name"}]
     end
 
     test "error: population length error yields population length error" do
@@ -91,7 +91,7 @@ defmodule DoiEsper.CityTest do
         :median_income => 55555,
       }
 
-      assert City.new(object) == [%Error{type: "Validation", text: "Invalid Population Size"}]
+      assert City.new(object) == [%Error{type: :validation, text: "Invalid Population Size"}]
     end
 
     test "error: population type error yields population type error" do
@@ -105,7 +105,7 @@ defmodule DoiEsper.CityTest do
         :median_income => 55555,
       }
 
-      assert City.new(object) == [%Error{type: "Validation", text: "Invalid Population Type"}]
+      assert City.new(object) == [%Error{type: :validation, text: "Invalid Population Type"}]
     end
 
     test "error: missing population" do
@@ -119,7 +119,7 @@ defmodule DoiEsper.CityTest do
         :median_income => 55555,
       }
 
-      assert City.new(object) == [%Error{type: "Validation", text: "Missing Fields"}]
+      assert City.new(object) == [%Error{type: :validation, text: "Missing Fields: Population"}]
     end
 
     test "error: missing name" do
@@ -133,7 +133,21 @@ defmodule DoiEsper.CityTest do
         :median_income => 55555,
       }
 
-      assert City.new(object) == [%Error{type: "Validation", text: "Missing Fields"}]
+      assert City.new(object) == [%Error{type: :validation, text: "Missing Fields: Name"}]
+    end
+
+    test "error: missing name and population" do
+      object = %{
+        :name => nil,
+        :state => :NE,
+        :latitude => 45.33333,
+        :longitude => 43.44444,
+        :population => nil,
+        :median_age => 55,
+        :median_income => 55555,
+      }
+
+      assert City.new(object) == [%Error{type: :validation, text: "Missing Fields: Population Name"}]
     end
   end
 end

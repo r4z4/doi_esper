@@ -46,7 +46,7 @@ defmodule DoiEsper.Entities.City do
     case Enum.any?(missing) do
       false -> {:ok, {object, err_props}}
       true  ->
-        err_props = Map.replace(err_props, :errors, [%Error{type: "Validation", text: "Missing Fields"} | err_props.errors])
+        err_props = Map.replace(err_props, :errors, [%Error{type: :validation, text: "Missing Fields: #{Utils.display_missing_fields(missing)}"} | err_props.errors])
         {:error, {object, err_props}}
     end
   end
@@ -57,7 +57,7 @@ defmodule DoiEsper.Entities.City do
     case is_binary(name) && String.length(name) in @name_min..@name_max do
       true -> {object, err_props}
       false ->
-        err_props = Map.replace(err_props, :errors, [%Error{type: "Validation", text: "Invalid Name"} | err_props.errors])
+        err_props = Map.replace(err_props, :errors, [%Error{type: :validation, text: "Invalid Name"} | err_props.errors])
         {object, err_props}
     end
   end
@@ -74,11 +74,11 @@ defmodule DoiEsper.Entities.City do
         case population in @pop_min..@pop_max do
           true -> {object, err_props}
           false ->
-            err_props = Map.replace(err_props, :errors, [%Error{type: "Validation", text: "Invalid Population Size"} | err_props.errors])
+            err_props = Map.replace(err_props, :errors, [%Error{type: :validation, text: "Invalid Population Size"} | err_props.errors])
             {object, err_props}
         end
       false ->
-        err_props = Map.replace(err_props, :errors, [%Error{type: "Validation", text: "Invalid Population Type"} | err_props.errors])
+        err_props = Map.replace(err_props, :errors, [%Error{type: :validation, text: "Invalid Population Type"} | err_props.errors])
         {object, err_props}
     end
   end
@@ -91,11 +91,11 @@ defmodule DoiEsper.Entities.City do
         case state in Utils.states do
           true -> {object, err_props}
           false ->
-            err_props = Map.replace(err_props, :errors, [%Error{type: "Validation", text: "Invalid State"} | err_props.errors])
+            err_props = Map.replace(err_props, :errors, [%Error{type: :validation, text: "Invalid State"} | err_props.errors])
             {object, err_props}
         end
       false ->
-        err_props = Map.replace(err_props, :errors, [%Error{type: "Validation", text: "Invalid State Type"} | err_props.errors])
+        err_props = Map.replace(err_props, :errors, [%Error{type: :validation, text: "Invalid State Type"} | err_props.errors])
         {object, err_props}
     end
   end
