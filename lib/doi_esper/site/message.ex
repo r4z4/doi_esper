@@ -61,10 +61,16 @@ defmodule DoiEsper.Site.Message do
   @spec validate_subject({:map, ErrorList}) :: {arg1, arg2} when arg1: :map, arg2: ErrorList
   defp validate_subject({object, err_props}) do
     subject = object["subject"]
-    case is_binary(subject) && String.length(subject) in @subject_min..@subject_max do
-      true -> {object, err_props}
+    case is_binary(subject) do
+      true ->
+        case String.length(subject) in @subject_min..@subject_max do
+          true -> {object, err_props}
+          false ->
+            err_props = Map.replace(err_props, :errors, [%Error{type: "Validation", text: "Invalid Subject Length"} | err_props.errors])
+            {object, err_props}
+        end
       false ->
-        err_props = Map.replace(err_props, :errors, [%Error{type: "Validation", text: "Invalid Subject"} | err_props.errors])
+        err_props = Map.replace(err_props, :errors, [%Error{type: "Validation", text: "Invalid Subject Type"} | err_props.errors])
         {object, err_props}
     end
   end

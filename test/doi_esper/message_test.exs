@@ -57,5 +57,37 @@ defmodule DoiEsper.MessageTest do
 
       assert Message.new(object) == [%Error{type: "Validation", text: "Invalid From"}]
     end
+
+    test "error: subject type error yields subject type error" do
+      test_id = UUIDv7.generate()
+      object = %{
+        "id" => test_id,
+        "to" => "df18d5eb-e99e-4481-9e16-4d2f434a3711",
+        "from" => "b5f44567-e031-44f1-aae6-972d7aabbb45",
+        "subject" => 1,
+        "type" => :p2p,
+        "text" => "Test Message Test",
+        "read" => false,
+        "saved" => false,
+      }
+
+      assert Message.new(object) == [%Error{type: "Validation", text: "Invalid Subject Type"}]
+    end
+
+    test "error: subject length error yields subject length error" do
+      test_id = UUIDv7.generate()
+      object = %{
+        "id" => test_id,
+        "to" => "df18d5eb-e99e-4481-9e16-4d2f434a3711",
+        "from" => "b5f44567-e031-44f1-aae6-972d7aabbb45",
+        "subject" => "ThisIsAVeryLongSubjectMoreThanTwentyCharacters",
+        "type" => :p2p,
+        "text" => "Test Message Test",
+        "read" => false,
+        "saved" => false,
+      }
+
+      assert Message.new(object) == [%Error{type: "Validation", text: "Invalid Subject Length"}]
+    end
   end
 end
