@@ -31,11 +31,23 @@ defmodule DoiEsper.Entities.City do
 
   @spec validate_required_fields({:map, ErrorList}) :: {arg1, arg2} when arg1: :map, arg2: ErrorList
   defp validate_required_fields({object, err_props}) do
-    if (object.name && object.population && object.state) do
-      {:ok, {object, err_props}}
-    else
-      err_props = Map.replace(err_props, :errors, [%Error{type: "Validation", text: "Missing Fields"} | err_props.errors])
-      {:error, {object, err_props}}
+    required_fields = [:name, :population, :state]
+    missing = Enum.map(required_fields, fn field ->
+      res = Map.fetch(object, field)
+      # IO.inspect(res, label: "Res")
+      case res do
+        {:ok, nil} -> field
+        {:ok, _val} -> nil
+        :error -> field
+        _ -> field
+      end
+    end)
+    # IO.inspect(missing, label: "Missing")
+    case Enum.any?(missing) do
+      false -> {:ok, {object, err_props}}
+      true  ->
+        err_props = Map.replace(err_props, :errors, [%Error{type: "Validation", text: "Missing Fields"} | err_props.errors])
+        {:error, {object, err_props}}
     end
   end
 
