@@ -18,20 +18,20 @@ defmodule DoiEsper.Core.Attachment do
     timestamps()
   end
 
+  @spec validate_path!({:map, ErrorList}) :: {arg1, arg2} when arg1: :map, arg2: ErrorList
   defp validate_title!({object, err_props}) do
     title = object["title"]
     case is_binary(title) && String.length(title) in @title_min..@title_max do
       true -> {object, err_props}
       false ->
-        err_props = [%Error{type: "Validation", text: "Invalid Title"} | err_props.errors]
+        err_props = Map.replace(err_props, :errors, [%Error{type: "Validation", text: "Invalid Title"} | err_props.errors])
         {object, err_props}
         # raise Error, %{type: "Path", text: "Hey"}
     end
   end
 
+  @spec validate_path!({:map, ErrorList}) :: {arg1, arg2} when arg1: :map, arg2: ErrorList
   defp validate_path!({object, err_props}) do
-    IO.inspect(err_props)
-    IO.puts err_props.errors
     path = object["path"]
     case is_binary(path) && String.length(path) in @title_min..@title_max do
       true -> {object, err_props}

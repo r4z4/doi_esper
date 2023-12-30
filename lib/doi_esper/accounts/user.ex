@@ -11,7 +11,8 @@ defmodule DoiEsper.Accounts.User do
     field :role, Ecto.Enum, values: Utils.roles
     field :city, :string
     field :state, Ecto.Enum, values: Utils.states
-    field :district, :integer
+    field :f_name, :string
+    field :l_name, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime

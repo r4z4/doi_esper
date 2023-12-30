@@ -103,7 +103,7 @@ defmodule DoiEsper.Accounts.Authorize do
   defp put_action(auth, action, resource) do
     IO.inspect(auth, label: "Auth")
     IO.inspect(action, label: "Action")
-    IO.inspect(resource, label: "Rescource")
+    IO.inspect(resource, label: "Resource")
     # e.g. putting create: true into the struct in the read/create/update block
     updated_action =
       auth

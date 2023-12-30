@@ -32,6 +32,8 @@ defmodule DoiEsperWeb.UserRegistrationLive do
         </.error>
 
         <.input field={@form[:username]} type="text" label="Username" required />
+        <.input field={@form[:f_name]} type="text" label="First Name" />
+        <.input field={@form[:l_name]} type="text" label="Last Name" />
         <.input field={@form[:email]} type="email" label="Email" required />
         <.input field={@form[:city]} type="text" label="City" />
         <.input field={@form[:state]} type="text" label="State" />

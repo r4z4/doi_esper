@@ -9,10 +9,14 @@ defmodule DoiEsper.AccountsFixtures do
   def valid_user_city, do: "Omaha"
   def valid_user_state, do: "NE"
   def valid_user_username, do: Ecto.UUID.generate()
+  def unique_user_f_name, do: "Jim"
+  def unique_user_l_name, do: "Jones"
 
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
       email: unique_user_email(),
+      f_name: unique_user_f_name(),
+      l_name: unique_user_l_name(),
       password: valid_user_password(),
       username: valid_user_username(),
       city: valid_user_city(),

@@ -12,6 +12,7 @@ config :doi_esper, DoiEsper.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
+  # database: "doi_esper_test#{System.get_env("MIX_TEST_PARTITION")}",
   database: "doi_esper_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
