@@ -33,6 +33,8 @@ alias DoiEsper.Entities.LuDepts
 alias DoiEsper.Core.Hold
 alias DoiEsper.Accounts.Authorize
 alias DoiEsper.Postgis.PostgisTest
+alias DoiEsper.Postgis.UsHospitals
+alias DoiEsper.Postgis.UsColleges
 
 Repo.insert_all(User, [
       %{id: "a9f44567-e031-44f1-aae6-972d7aabbb45", username: "admin",        city: "Rapid City",     state: :SD, f_name: "Jim",    l_name: "Smith",        email: "admin@admin.com",      role: :admin,          hashed_password: Bcrypt.hash_pwd_salt("password"), confirmed_at: NaiveDateTime.local_now(), updated_at: NaiveDateTime.local_now(), inserted_at: NaiveDateTime.local_now()},
@@ -59,17 +61,47 @@ Repo.insert_all(City, [
       %{name: "Deer River", population: 3000, latitude: 51.756465, longitude: 2.756697}
 ])
 
-geo = %Geo.Point{coordinates: {30, -90}, srid: 4326}
-geo2 = %Geo.Point{coordinates: {-30, 90}, srid: 4326}
-geo3 = %Geo.Point{coordinates: {75, -10}, srid: 4326}
-Repo.insert_all(PostgisTest, [
-      %{name: "Northfield", geom: geo},
-      %{name: "Deer River", geom: geo2},
-      %{name: "Minneapolis", geom: geo3},
-      %{name: "Grand Rapids", geom: geo2},
-      %{name: "Burnsville", geom: geo},
-      %{name: "Elk River", geom: geo3}
-])
+# nf = %Geo.Point{coordinates: {44.458376, -93.161693}, srid: 4326}
+# dr = %Geo.Point{coordinates: {47.3330045, -93.7927173}, srid: 4326}
+# mpls = %Geo.Point{coordinates: {44.977479, -93.264358}, srid: 4326}
+# gr = %Geo.Point{coordinates: {47.2371658, -93.5302142}, srid: 4326}
+# bv = %Geo.Point{coordinates: {44.7677778, -93.2775}, srid: 4326}
+# er = %Geo.Point{coordinates: {45.3038889, -93.5669444}, srid: 4326}
+# al = %Geo.Point{coordinates: {43.647846, -93.368714}, srid: 4326}
+# omaha = %Geo.Point{coordinates: {41.256538, -95.934511}, srid: 4326}
+
+# Repo.insert_all(PostgisTest, [
+#       %{name: "Northfield", geom: nf},
+#       %{name: "Deer River", geom: dr},
+#       %{name: "Minneapolis", geom: mpls},
+#       %{name: "Grand Rapids", geom: gr},
+#       %{name: "Burnsville", geom: bv},
+#       %{name: "Elk River", geom: er},
+#       %{name: "A;bert Lea", geom: al},
+#       %{name: "Omaha", geom: omaha},
+# ])
+
+nebr_path = "../../../priv/postgis/nebraska.csv"
+table_objects = PostgisTest.csv_to_table_objects(nebr_path)
+IO.inspect(table_objects, label: "Table Objects")
+IO.inspect(List.last(table_objects), label: "Tail")
+Repo.insert_all(PostgisTest,
+      table_objects
+)
+
+hosp_path = "../../../priv/postgis/Hospitals_LatLong.csv"
+hosp_objects = PostgisTest.csv_to_table_objects(hosp_path)
+# IO.inspect(hosp_objects, label: "Table Objects")
+Repo.insert_all(UsHospitals,
+      hosp_objects
+)
+
+coll_path = "../../../priv/postgis/Colleges_LatLong.csv"
+coll_objects = PostgisTest.csv_to_table_objects(coll_path)
+# IO.inspect(hosp_objects, label: "Table Objects")
+Repo.insert_all(UsColleges,
+      coll_objects
+)
 
 Repo.insert_all(LuDepts, [
       %{id: "DOI", dept: "Insurance"},
