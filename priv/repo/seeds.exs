@@ -29,6 +29,7 @@ alias DoiEsper.Accounts.User
 alias DoiEsper.Core.Attachment
 alias DoiEsper.Entities.City
 alias DoiEsper.Entities.State
+alias DoiEsper.Entities.LuDepts
 alias DoiEsper.Core.Hold
 alias DoiEsper.Accounts.Authorize
 alias DoiEsper.Postgis.PostgisTest
@@ -68,6 +69,15 @@ Repo.insert_all(PostgisTest, [
       %{name: "Grand Rapids", geom: geo2},
       %{name: "Burnsville", geom: geo},
       %{name: "Elk River", geom: geo3}
+])
+
+Repo.insert_all(LuDepts, [
+      %{id: "DOI", dept: "Insurance"},
+      %{id: "DED", dept: "Econ Dev"},
+      %{id: "NRC", dept: "National Resource Council"},
+      %{id: "DMV", dept: "Motor Vehicales"},
+      %{id: "OCIO", dept: "Office of the CIO"},
+      %{id: "DOT", dept: "Transportation"}
 ])
 
 Repo.insert_all(Attachment, [
