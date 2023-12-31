@@ -43,5 +43,7 @@ npm-debug.log
 /.env
 
 # Allowing for GH workflow - whatever
-# TOWNSSURVEY_POLY.sql
+TOWNSSURVEY_POLY.sql
+muni.sql
+transportation.sql
 
