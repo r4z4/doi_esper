@@ -7,9 +7,10 @@ defmodule DoiEsperWeb.PostgisComponents do
     ~H"""
       <div class="relative flex">
         <div>
+        <p><%= if @form[:valid] do "Valid" else "Invalid" end %></p>
         <.form for={@form} phx-change="validate" phx-submit="submit">
           <.input type="text" name="address" value="" field={@form[:address]} />
-          <button>Submit</button>
+          <button disabled={!@form[:valid]}>Submit</button>
         </.form>
       </div>
       <button

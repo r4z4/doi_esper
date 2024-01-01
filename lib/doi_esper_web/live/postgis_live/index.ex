@@ -74,9 +74,9 @@ defmodule DoiEsperWeb.PostgisLive.Index do
     # {44.458376, -93.161693}
   end
 
-  def find_nearest(_addr) do
-    addr_input = "7724 Pine Cir Omaha NE 68124"
-    coords = fetch_coords(addr_input)
+  def find_nearest(addr) do
+    # addr_input = "7724 Pine Cir Omaha NE 68124"
+    coords = fetch_coords(addr)
     IO.inspect(coords, label: "Coords")
     point = %Geo.Point{coordinates: coords, srid: 4326}
     query = from hospital in UsHospitals, limit: 10, select: [hospital.name, st_distance(hospital.geom, ^point)], where: st_dwithin_in_meters(hospital.geom, ^point, 10000.0), order_by: [desc: st_distance(hospital.geom, ^point)]
@@ -99,12 +99,8 @@ defmodule DoiEsperWeb.PostgisLive.Index do
     {:ok,
       socket
       |> assign(:postgis_data, nil)
-      |> assign(:form, %{address: nil})
+      |> assign(:form, %{address: nil, valid: false})
     }
-  end
-
-  def handle_event("submit", params, socket) do
-    IO.puts("Test")
   end
 
   def handle_event("validate", %{"address" => address}, socket) do
@@ -114,8 +110,21 @@ defmodule DoiEsperWeb.PostgisLive.Index do
     #   |> Map.put(:action, :insert)
     #   |> to_form()
     IO.inspect(address, label: "Params")
-    form = %{address: address}
+    # FIXME: Make the N/S optional
+    pattern = ~r/\d{1,5}\s(\w?.?)?\s?(\b\w*\b\s){1,2}\w*\.?/
+    valid = String.match?(address, pattern)
+    form = %{address: address, valid: valid}
 
     {:noreply, assign(socket, form: form)}
+  end
+
+  def handle_event("submit", params, socket) do
+    IO.inspect(params, label: "Params")
+    addr = params["address"]
+    data = find_nearest(addr)
+    IO.inspect(data, label: "Data")
+    {:noreply,
+      socket
+      |> assign(postgis_data: data)}
   end
 end
