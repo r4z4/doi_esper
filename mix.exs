@@ -58,6 +58,7 @@ defmodule DoiEsper.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:uuidv7, "~> 0.2"},
       {:geo_postgis, "~> 3.5"},
+      {:dotenv_parser, "~> 2.0"},
       # NIF
       {:benchee, "~> 1.2"},
       {:sweet_xml, "~> 0.7.4"},

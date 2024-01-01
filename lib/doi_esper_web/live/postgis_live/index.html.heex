@@ -1,8 +1,11 @@
 <.header>
-  <h3 class="text-center text-2xl mb-3">Image Page</h3>
+  <h3 class="text-center text-2xl mb-3">Find Nearest Hospital</h3>
 </.header>
   <div class="grid grid-cols-2 gap-2 w-full place-items-stretch">
     <div>
-      <DoiEsperWeb.PostgisComponents.postgis_card postgis_data={@postgis_data} />
+      <DoiEsperWeb.PostgisComponents.postgis_card form={@form} postgis_data={@postgis_data} />
+    </div>
+    <div>
+      <DoiEsperWeb.PostgisComponents.postgis_display postgis_data={@postgis_data} />
     </div>
   </div>
