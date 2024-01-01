@@ -2,19 +2,21 @@ defmodule DoiEsperWeb.PostgisLive.Index do
   use DoiEsperWeb, :live_view
   alias DoiEsper.Postgis.PostgisTest
   alias DoiEsper.Postgis.UsHospitals
+  alias DoiEsper.Postgis.UsColleges
   alias DoiEsper.Repo
   import Ecto.Query
   import Geo.PostGIS
 
   @impl true
   def handle_event("service_casted", params, socket) do
+    entity = :hospital
+    addr = "7724 Pine Circle Omaha NE 68124"
     data =
       case Kernel.elem(Integer.parse(params["id"]), 0) do
         # GenServer.cast String.to_existing_atom(params["castto"]), {String.to_existing_atom(params["op"]), String.to_existing_atom(params["res"])}
-        1 -> find_nearest("Doesnt Matter What Address")
-        2 -> find_nearest("Doesnt Matter What Address")
-        _ ->
-          find_nearest("Doesnt Matter What Address")
+        1 -> find_nearest(addr, entity)
+        2 -> find_nearest(addr, entity)
+        _ -> find_nearest(addr, entity)
       end
     IO.inspect(data, label: "Data")
     {:noreply,
@@ -59,29 +61,45 @@ defmodule DoiEsperWeb.PostgisLive.Index do
     # Alwaus get first
     res = List.first(body)
 
-    lat =
-      res["lat"]
-      |> Float.parse()
-      |> Kernel.elem(0)
+    coords =
+      case res do
+        nil -> {0.0, 0.0}
+          _ ->
+            lat =
+              res["lat"]
+              |> Float.parse()
+              |> Kernel.elem(0)
 
-    lon =
-      res["lon"]
-      |> Float.parse()
-      |> Kernel.elem(0)
+            lon =
+              res["lon"]
+              |> Float.parse()
+              |> Kernel.elem(0)
 
-    {lat, lon}
-
+            {lat, lon}
+      end
     # {44.458376, -93.161693}
+    coords
   end
 
-  def find_nearest(addr) do
+  def find_nearest(addr, entity) do
     # addr_input = "7724 Pine Cir Omaha NE 68124"
     coords = fetch_coords(addr)
     IO.inspect(coords, label: "Coords")
-    point = %Geo.Point{coordinates: coords, srid: 4326}
-    query = from hospital in UsHospitals, limit: 10, select: [hospital.name, st_distance(hospital.geom, ^point)], where: st_dwithin_in_meters(hospital.geom, ^point, 10000.0), order_by: [desc: st_distance(hospital.geom, ^point)]
-    query
-    |> Repo.all
+    case coords do
+      # Our error case
+      {0.0, 0.0} -> [["No Results", 0.0]]
+      _ ->
+        point = %Geo.Point{coordinates: coords, srid: 4326}
+        query =
+          case entity do
+            :hospital -> from hospital in UsHospitals, limit: 10, select: [hospital.name, st_distance(hospital.geom, ^point)], where: st_dwithin_in_meters(hospital.geom, ^point, 10000.0), order_by: [desc: st_distance(hospital.geom, ^point)]
+            :college -> from college in UsColleges, limit: 10, select: [college.name, st_distance(college.geom, ^point)], where: st_dwithin_in_meters(college.geom, ^point, 10000.0), order_by: [desc: st_distance(college.geom, ^point)]
+            _ -> from hospital in UsHospitals, limit: 10, select: [hospital.name, st_distance(hospital.geom, ^point)], where: st_dwithin_in_meters(hospital.geom, ^point, 10000.0), order_by: [desc: st_distance(hospital.geom, ^point)]
+          end
+        # query = from hospital in UsHospitals, limit: 10, select: [hospital.name, st_distance(hospital.geom, ^point)], where: st_dwithin_in_meters(hospital.geom, ^point, 10000.0), order_by: [desc: st_distance(hospital.geom, ^point)]
+        query
+        |> Repo.all
+    end
   end
 
 
@@ -99,7 +117,7 @@ defmodule DoiEsperWeb.PostgisLive.Index do
     {:ok,
       socket
       |> assign(:postgis_data, nil)
-      |> assign(:form, %{address: nil, valid: false})
+      |> assign(:form, %{address: nil, valid: false, city: nil, state: nil, zip: nil})
     }
   end
 
@@ -121,7 +139,13 @@ defmodule DoiEsperWeb.PostgisLive.Index do
   def handle_event("submit", params, socket) do
     IO.inspect(params, label: "Params")
     addr = params["address"]
-    data = find_nearest(addr)
+    city = params["city"]
+    state = params["state"]
+    zip = params["zip"]
+    entity = :hospital
+    address = addr <> " " <> city <> " " <> state <> " " <> zip
+    IO.inspect(address, label: "Address")
+    data = find_nearest(address, entity)
     IO.inspect(data, label: "Data")
     {:noreply,
       socket

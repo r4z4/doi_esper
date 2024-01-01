@@ -35,6 +35,7 @@ alias DoiEsper.Accounts.Authorize
 alias DoiEsper.Postgis.PostgisTest
 alias DoiEsper.Postgis.UsHospitals
 alias DoiEsper.Postgis.UsColleges
+alias DoiEsper.Postgis.UsArenas
 
 Repo.insert_all(User, [
       %{id: "a9f44567-e031-44f1-aae6-972d7aabbb45", username: "admin",        city: "Rapid City",     state: :SD, f_name: "Jim",    l_name: "Smith",        email: "admin@admin.com",      role: :admin,          hashed_password: Bcrypt.hash_pwd_salt("password"), confirmed_at: NaiveDateTime.local_now(), updated_at: NaiveDateTime.local_now(), inserted_at: NaiveDateTime.local_now()},
@@ -101,6 +102,13 @@ coll_objects = PostgisTest.csv_to_table_objects(coll_path)
 # IO.inspect(hosp_objects, label: "Table Objects")
 Repo.insert_all(UsColleges,
       coll_objects
+)
+
+arena_path = "../../../priv/postgis/Arenas_Full.csv"
+arena_objects = UsArenas.csv_to_table_objects(arena_path)
+# IO.inspect(hosp_objects, label: "Table Objects")
+Repo.insert_all(UsArenas,
+      arena_objects
 )
 
 Repo.insert_all(LuDepts, [
