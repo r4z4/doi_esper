@@ -1,8 +1,10 @@
 defmodule DoiEsperWeb.PostgisLive.Index do
   use DoiEsperWeb, :live_view
   alias DoiEsper.Postgis.PostgisTest
+  alias DoiEsper.Postgis.PostgisData
   alias DoiEsper.Postgis.UsHospitals
   alias DoiEsper.Postgis.UsColleges
+  alias DoiEsper.Postgis.UsArenas
   alias DoiEsper.Repo
   import Ecto.Query
   import Geo.PostGIS
@@ -14,9 +16,10 @@ defmodule DoiEsperWeb.PostgisLive.Index do
     data =
       case Kernel.elem(Integer.parse(params["id"]), 0) do
         # GenServer.cast String.to_existing_atom(params["castto"]), {String.to_existing_atom(params["op"]), String.to_existing_atom(params["res"])}
-        1 -> find_nearest(addr, entity)
-        2 -> find_nearest(addr, entity)
-        _ -> find_nearest(addr, entity)
+        1 -> find_nearest(addr, :hospital)
+        2 -> find_nearest(addr, :college)
+        3 -> find_nearest(addr, :arena)
+        _ -> raise "No ID Match for find_nearest()"
       end
     IO.inspect(data, label: "Data")
     {:noreply,
@@ -58,7 +61,7 @@ defmodule DoiEsperWeb.PostgisLive.Index do
     {:ok, body} = Jason.decode(resp.body)
     IO.inspect(body, label: "Body")
 
-    # Alwaus get first
+    # Always get first
     res = List.first(body)
 
     coords =
@@ -87,14 +90,15 @@ defmodule DoiEsperWeb.PostgisLive.Index do
     IO.inspect(coords, label: "Coords")
     case coords do
       # Our error case
-      {0.0, 0.0} -> [["No Results", 0.0]]
+      {0.0, 0.0} -> [%{:name => "No Results", :dist => 0.0}]
       _ ->
         point = %Geo.Point{coordinates: coords, srid: 4326}
         query =
           case entity do
-            :hospital -> from hospital in UsHospitals, limit: 10, select: [hospital.name, st_distance(hospital.geom, ^point)], where: st_dwithin_in_meters(hospital.geom, ^point, 10000.0), order_by: [desc: st_distance(hospital.geom, ^point)]
-            :college -> from college in UsColleges, limit: 10, select: [college.name, st_distance(college.geom, ^point)], where: st_dwithin_in_meters(college.geom, ^point, 10000.0), order_by: [desc: st_distance(college.geom, ^point)]
-            _ -> from hospital in UsHospitals, limit: 10, select: [hospital.name, st_distance(hospital.geom, ^point)], where: st_dwithin_in_meters(hospital.geom, ^point, 10000.0), order_by: [desc: st_distance(hospital.geom, ^point)]
+            :hospital -> from hospital in UsHospitals, limit: 10, select: %{:name => hospital.name, :dist => st_distance(hospital.geom, ^point)}, where: st_dwithin_in_meters(hospital.geom, ^point, 10000.0), order_by: [asc: st_distance(hospital.geom, ^point)]
+            :college -> from college in UsColleges, limit: 5, select: %{:name => college.name, :dist => st_distance(college.geom, ^point)}, where: st_dwithin_in_meters(college.geom, ^point, 10000.0), order_by: [asc: st_distance(college.geom, ^point)]
+            :arena -> from arena in UsArenas, limit: 10, select: %{:name => arena.stadium, :conference => arena.conference, :dist => st_distance(arena.geom, ^point)}, where: st_dwithin_in_meters(arena.geom, ^point, 10000.0), order_by: [asc: st_distance(arena.geom, ^point)]
+            _ -> from hospital in UsHospitals, limit: 10, select: [hospital.name, st_distance(hospital.geom, ^point)], where: st_dwithin_in_meters(hospital.geom, ^point, 10000.0), order_by: [asc: st_distance(hospital.geom, ^point)]
           end
         # query = from hospital in UsHospitals, limit: 10, select: [hospital.name, st_distance(hospital.geom, ^point)], where: st_dwithin_in_meters(hospital.geom, ^point, 10000.0), order_by: [desc: st_distance(hospital.geom, ^point)]
         query
@@ -103,21 +107,22 @@ defmodule DoiEsperWeb.PostgisLive.Index do
   end
 
 
-  def example_query(geom) do
-    # Just override it for now
-    geom = %Geo.Point{coordinates: {-30, 90}, srid: 4326}
-    query = from postgis_test in PostgisTest, limit: 1, select: st_distance(postgis_test.geom, ^geom)
-    query
-    |> Repo.one
-  end
+  # def example_query(geom) do
+  #   # Just override it for now
+  #   geom = %Geo.Point{coordinates: {-30, 90}, srid: 4326}
+  #   query = from postgis_test in PostgisTest, limit: 1, select: st_distance(postgis_test.geom, ^geom)
+  #   query
+  #   |> Repo.one
+  # end
 
   def mount(_params, _session, socket) do
     geom = %Geo.Point{coordinates: {-30, 90}, srid: 4326}
-    res = example_query(geom)
+    # res = example_query(geom)
     {:ok,
       socket
       |> assign(:postgis_data, nil)
-      |> assign(:form, %{address: nil, valid: false, city: nil, state: nil, zip: nil})
+      |> assign(:postgis_addr, nil)
+      |> assign(:form, %{"address" => nil, "valid" => false, "city" => nil, "state" => nil, "zip" => nil, "entity" => nil})
     }
   end
 
@@ -142,13 +147,15 @@ defmodule DoiEsperWeb.PostgisLive.Index do
     city = params["city"]
     state = params["state"]
     zip = params["zip"]
-    entity = :hospital
+    entity = params["entity"] |> String.to_existing_atom()
     address = addr <> " " <> city <> " " <> state <> " " <> zip
     IO.inspect(address, label: "Address")
     data = find_nearest(address, entity)
-    IO.inspect(data, label: "Data")
+    postgis_data = %PostgisData{entity: entity, data: data}
+    IO.inspect(postgis_data, label: "Data")
     {:noreply,
       socket
-      |> assign(postgis_data: data)}
+      |> assign(postgis_data: postgis_data)
+      |> assign(postgis_addr: address)}
   end
 end
